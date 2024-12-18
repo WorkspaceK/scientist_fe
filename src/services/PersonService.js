@@ -2,13 +2,13 @@ import request, {apiFormData} from 'utils/request'
 import { endPointAPI } from 'constants/endPointAPI'
 
 const personService = () => {
-    const getListPerson = async (currentPage, pageSize, sortOrder, field, dataSearch) => {
+    const get_by_page = async (page, size, order, field, dataSearch) => {
         try {
-            const response = await request.get(`/${endPointAPI.ADMIN.PERSON.GET_LIST}`, {
+            const response = await request.get(`/${endPointAPI.ADMIN.PERSON.GET_LIST}/page`, {
                 params: {
-                    page: currentPage,
-                    pageSize: pageSize,
-                    sortOrder: sortOrder,
+                    page: page,
+                    size: size, /* size number / page */
+                    order: order,
                     field: field,
                     last_name: dataSearch,
                     // code: dataSearch,
@@ -102,12 +102,12 @@ const personService = () => {
         }
     }
 
-    const showPersonListByCode = async (currentPage, pageSize, sortOrder, field, dataSearch, codes) => {
+    const showPersonListByCode = async (currentPage, size, sortOrder, field, dataSearch, codes) => {
         try {
             const response = await request.get(`/${endPointAPI.ADMIN.PERSON.SHOW_PERSON_LIST_BY_CODE}`,{
                 params: {
                     page: currentPage,
-                    pageSize: pageSize,
+                    size: size,
                     sortOrder: sortOrder,
                     field: field,
                     name: dataSearch,
@@ -352,7 +352,7 @@ const personService = () => {
     }
 
     return {
-        getListPerson,
+        get_by_page,
         search,
         // getListPersonPaginate,
         // getListSortOrder,

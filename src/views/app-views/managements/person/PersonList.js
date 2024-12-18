@@ -40,8 +40,8 @@ const PersonList = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
     const [selectedTotal, setSelectedTotal] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [current, setCurrent] = useState(10);
+    const [page, setPage] = useState(1);
+    const [size, setSize] = useState(10);
     const [dataSearch, setDataSearch] = useState('');
     const [selectedSorter, setSelectedSorter] = useState({});
     const [selectedAction, setSelectedAction] = useState(null);
@@ -50,7 +50,7 @@ const PersonList = () => {
     useEffect(() => {
         if (dataSearch === "") getList(selectedSorter);
         else searchList(dataSearch);
-    }, [currentPage, current, selectedSorter, dataSearch])
+    }, [page, size, selectedSorter, dataSearch])
 
     //get
     const getList = async (sorter, value) => {
@@ -58,7 +58,7 @@ const PersonList = () => {
             setLoading(true);
             let res;
             if (isUndefined(sorter.order)) {
-                sessionStorage.clear();
+                // sessionStorage.clear();
                 sorter.order = 'desc';
                 sorter.field = 'updated_at';
             } else {
@@ -68,26 +68,10 @@ const PersonList = () => {
                     sorter.order = 'desc';
                 }
             }
-
-            res = await personAPI.getListPerson(currentPage, current, sorter.order, sorter.field, value);
-
+            res = await personAPI.get_by_page(page, size, sorter.order, sorter.field, value);
             if (res) {
-                const existingData = JSON.parse(sessionStorage.getItem('personList')) || [];
-
-                const newData = existingData.filter(newItem => {
-                    return !res.data.some(existingItem => existingItem.id === newItem.id);
-                });
-
-                const updatedData = [...res.data, ...newData];
-
-                if (sorter.order ==='desc' && sorter.field === 'updated_at') {
-                    updatedData.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-                }
-
-                sessionStorage.setItem('personList', JSON.stringify(updatedData));
-
-                setList(updatedData);
-                setSelectedTotal(res.total);
+                setList(res.records)
+                setSelectedTotal(res.page_info.total_items);
             } else {
                 message.error('Error data');
             }
@@ -118,13 +102,11 @@ const PersonList = () => {
     }
     const onSearch = (value) => {
         setDataSearch(value);
-        sessionStorage.clear();
     }
 
-    const onShowSizeChange = (current, pageSize) => {
+    const onShowSizeChange = (current, size) => {
         setLoading(true);
-        // sessionStorage.clear();
-        setCurrent(pageSize);
+        setSize(size);
 
         setTimeout(() => {
             setLoading(false);
@@ -133,7 +115,7 @@ const PersonList = () => {
 
     const onChangePage = (page) => {
         setLoading(true);
-        setCurrentPage(page);
+        setPage(page);
         setTimeout(() => {
             setLoading(false);
         }, 500);
@@ -149,7 +131,7 @@ const PersonList = () => {
     //sort
     const onChangeSort = (pagination, filters, sorter) => {
         resetPagination();
-        setCurrentPage('1');
+        setPage('1');
         setSelectedSorter(sorter);
         // sessionStorage.clear();
     }
@@ -231,11 +213,7 @@ const PersonList = () => {
                     const res = await personAPI.deletePerson(id);
 
                     if (res) {
-                        const existingData = JSON.parse(sessionStorage.getItem('personList')) || [];
-                        const newData = existingData.filter((item) => item.id !== id);
-                        sessionStorage.setItem('personList', JSON.stringify(newData));
-
-                        setList(newData);
+                        setList(list.filter(item => item.id !== id));
                         message.success('Xóa thành công');
                     } else {
                         message.error('Xóa thất bại');
@@ -263,11 +241,11 @@ const PersonList = () => {
                     const res = await personAPI.deleteMultiple(selectedRowKeys);
 
                     if (res) {
-                        const existingData = JSON.parse(sessionStorage.getItem('personList')) || [];
-                        const newData = existingData.filter(item=> !selectedRowKeys.includes(item.id));
-                        sessionStorage.setItem('personList', JSON.stringify(newData));
-
-                        setList(newData);
+                        // const existingData = JSON.parse(sessionStorage.getItem('personList')) || [];
+                        // const newData = existingData.filter(item=> !selectedRowKeys.includes(item.id));
+                        // sessionStorage.setItem('personList', JSON.stringify(newData));
+                        // setList(newData);
+                        // setList(list.filter(item => item.id !== id));
                         getList(selectedSorter, dataSearch);
                         setSelectedRowKeys([]);
                         setSelectedRows([]);
@@ -327,24 +305,34 @@ const PersonList = () => {
     //tableColumns
     const tableColumns = [
         {
+            title: 'STT',
+            dataIndex: 'index',
+            render: (_, __, index) => index + 1,
+            key: '1',
+        },
+        {
             title: 'ID',
             dataIndex: 'id',
             sorter: (a, b) => utils.antdTableSorter(a, b, 'id'),
+            key: '2'
         },
         {
             title: 'CCCD/CMND',
             dataIndex: 'identification',
             sorter: (a, b) => utils.antdTableSorter(a, b, 'identification'),
+            key: '3'
         },
         {
             title: 'Họ và tên đệm',
             dataIndex: 'first_name',
             sorter: (a, b) => utils.antdTableSorter(a, b, 'first_name'),
+            key: '4'
         },
         {
             title: 'Tên',
             dataIndex: 'last_name',
             sorter: (a, b) => utils.antdTableSorter(a, b, 'last_name'),
+            key: '5'
         },
         {
             title: 'Ảnh đại diện',
@@ -355,45 +343,50 @@ const PersonList = () => {
                     {/*<AvatarStatus src={'#'}/>*/}
                 </div>
             ),
-            sorter: (a, b) => utils.antdTableSorter(a, b, 'name')
+            key: '6'
         },
         {
             title: 'Email',
             dataIndex: 'email',
             sorter: (a, b) => utils.antdTableSorter(a, b, 'email'),
+            key: '7'
         },
         {
             title: 'Số điện thoại',
             dataIndex: 'phone_number',
             sorter: (a, b) => utils.antdTableSorter(a, b, 'phone_number'),
+            key: '8'
         },
-        // {
-        //     title: 'Học vị',
-        //     dataIndex: 'degree_id',
-        //     sorter: (a, b) => utils.antdTableSorter(a, b, 'degree_id'),
-        //     render: (degree_id) => {
-        //         if (degree_id === 1) {
-        //             return 'ThS';
-        //         } else if (degree_id === 2) {
-        //             return 'TS';
-        //         } else {
-        //             return 'N/A'; // Nếu không khớp, hiển thị giá trị mặc định
-        //         }
-        //     },        },
-        // {
-        //     title: 'Học hàm',
-        //     dataIndex: 'academic_rank_id',
-        //     sorter: (a, b) => utils.antdTableSorter(a, b, 'academic_rank_id'),
-        //     render: (academic_rank_id) => {
-        //         if (academic_rank_id === 1) {
-        //             return 'PGS';
-        //         } else if (academic_rank_id === 2) {
-        //             return 'GS';
-        //         } else {
-        //             return 'N/A'; // Nếu không khớp, hiển thị giá trị mặc định
-        //         }
-        //     },
-        // },
+        {
+            title: 'Học vị',
+            dataIndex: 'degree_id',
+            sorter: (a, b) => utils.antdTableSorter(a, b, 'degree_id'),
+            render: (degree_id) => {
+                if (degree_id === 1) {
+                    return 'ThS';
+                } else if (degree_id === 2) {
+                    return 'TS';
+                } else {
+                    return 'N/A'; // Nếu không khớp, hiển thị giá trị mặc định
+                }
+            },
+            key: '9'
+        },
+        {
+            title: 'Học hàm',
+            dataIndex: 'academic_rank_id',
+            sorter: (a, b) => utils.antdTableSorter(a, b, 'academic_rank_id'),
+            render: (academic_rank_id) => {
+                if (academic_rank_id === 1) {
+                    return 'PGS';
+                } else if (academic_rank_id === 2) {
+                    return 'GS';
+                } else {
+                    return 'N/A';
+                }
+            },
+            key: '10'
+        },
         {
             title: '',
             dataIndex: 'actions',
@@ -412,7 +405,8 @@ const PersonList = () => {
                     </Tooltip>
                     <EllipsisDropdown menu={dropdownMenu(elm)}/>
                 </div>
-            )
+            ),
+            key: '11'
         }
     ];
 
@@ -434,16 +428,16 @@ const PersonList = () => {
     );
 
     //filter
-    const defaultCheckedList = tableColumns.map((item) => item.dataIndex);
+    const excludeDataIndex = ['id', 'identification', 'email'];
+    const defaultCheckedList = tableColumns
+        .filter(item => !excludeDataIndex.includes(item.dataIndex))
+        .map(item => item.key);
     const [checkedList, setCheckedList] = useState(defaultCheckedList);
-
-    const options = tableColumns.map(({ dataIndex, title }) => ({
+    const options = tableColumns.map(({ key, title }) => ({
         label: title || 'Action',
-        value: dataIndex,
+        value: key,
     }));
-
-    const newTableColumns = tableColumns.filter(item => checkedList.includes(item.dataIndex));
-
+    const newTableColumns = tableColumns.filter(item => checkedList.includes(item.key));
     const menu = (
         <Menu>
             <div style={{padding: '10px'}}>
@@ -508,7 +502,7 @@ const PersonList = () => {
                         <Select
                             defaultValue="Select"
                             className="w-100"
-                            style={{minWidth: 228}}
+                            style={{minWidth: 228, maxWidth: 200, width: "auto"}}
                             onChange={handleSelectChange}
                         >
                             <Option value="Select">Hành động</Option>
@@ -534,27 +528,30 @@ const PersonList = () => {
                             }}
                         />
                     </div>
-                    <Button
-                        onClick={addPerson}
-                        type="primary"
-                        style={{borderRadius: '0', borderRightColor: 'white', background: '#666CFF'}}
-                        className="rounded-left"
-                        block>
-                        Thêm mới
-                    </Button>
+                    <div className="mr-md-3" style={{display:'flex', maxWidth: 150}}>
+                        <Button
+                            onClick={addPerson}
+                            type="primary"
+                            style={{borderRadius: '0', borderRightColor: 'white', background: '#666CFF'}}
+                            className="rounded-left"
+                            block>
+                            Thêm mới
+                        </Button>
 
-                    <Space wrap>
-                        <Dropdown
-                            overlay={menu}
-                            trigger={['click']}
-                            placement="bottomLeft"
-                        >
-                            <Button type="primary"
-                                    style={{borderRadius: '0', background: '#666CFF'}}
-                                    className="rounded-right"
-                                    icon={<SettingOutlined/>}></Button>
-                        </Dropdown>
-                    </Space>
+                        <Space wrap>
+                            <Dropdown
+                                overlay={menu}
+                                trigger={['click']}
+                                placement="bottomLeft"
+                            >
+                                <Button type="primary"
+                                        style={{borderRadius: '0', background: '#666CFF'}}
+                                        className="rounded-right"
+                                        icon={<SettingOutlined/>}>
+                                </Button>
+                            </Dropdown>
+                        </Space>
+                    </div>
                 </Flex>
             </Flex>
             <div className="table-responsive">
@@ -567,13 +564,16 @@ const PersonList = () => {
                     rowSelection={{
                         selectedRowKeys: selectedRowKeys,
                         type: 'checkbox',
+                        onChange: () => {
+
+                        },
                         preserveSelectedRowKeys: false,
                         ...rowSelection,
-                        getCheckboxProps: (elm) => {
-                            if (selectedAction && selectedAction.label === 'Delete' && elm.students_count !== 0 ) {
-                                return {disabled: true};
-                            }
-                        },
+                        // getCheckboxProps: (elm) => {
+                        //     if (selectedAction && selectedAction.label === 'Delete' && elm.students_count !== 0 ) {
+                        //         return {disabled: true};
+                        //     }
+                        // },
                     }}
                     pagination={false}
                     onChange={onChangeSort}
