@@ -10,28 +10,24 @@ import {
     Menu,
     Pagination,
     Checkbox,
-    Space,
-    Dropdown, Tooltip
+    Tooltip, Space, Dropdown, Row, Col
 } from 'antd';
 import {
-    EditOutlined, DeleteOutlined,
-    EyeOutlined, CopyOutlined, SettingOutlined, AlignLeftOutlined
+    EditOutlined, DeleteOutlined, SettingOutlined,
 } from '@ant-design/icons' ;
-import { useHistory } from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import {debounce, isUndefined} from 'lodash';
-import EllipsisDropdown from 'components/shared-components/EllipsisDropdown';
-import Flex from 'components/shared-components/Flex';
 import utils from 'utils';
 import personService from 'services/PersonService';
 import AvatarStatus from "components/shared-components/AvatarStatus";
 import {API_BASE_URL} from "constants/ApiConstant";
-// import
+import EditPerson from "./EditPerson";
+import Flex from "../../../../components/shared-components/Flex";
+import EditCopyPerson from "./ViewDetail";
 
-const { Option } = Select
 const { confirm } = Modal;
-const { Search } = Input;
 
-const PersonList = () => {
+const ViewMassCopy = () => {
     let history = useHistory();
     const personAPI = personService();
     const [list, setList] = useState(null);
@@ -47,32 +43,22 @@ const PersonList = () => {
     const [selectedSorter, setSelectedSorter] = useState({});
     const [selectedAction, setSelectedAction] = useState(null);
 
+    const location = useLocation();
+    const { res } = location.state || { res: [] };
+    const codes = Array.isArray(res) ? res.map((item) => item.code) : [];
+    const ids = res.map(item => item.id);
     //api
     useEffect(() => {
-        if (dataSearch === "") getList(selectedSorter);
-        else searchList(dataSearch);
-    }, [page, size, selectedSorter, dataSearch])
+        // getList(selectedSorter);
+        setList(res)
+    }, [])
 
     //get
-    const getList = async (sorter, value) => {
+    const getList = async (res) => {
         try {
-            setLoading(true);
-            let res;
-            if (isUndefined(sorter.order)) {
-                // sessionStorage.clear();
-                sorter.order = 'desc';
-                sorter.field = 'updated_at';
-            } else {
-                if (sorter.order === 'ascend') {
-                    sorter.order = 'asc';
-                } else if (sorter.order === 'descend') {
-                    sorter.order = 'desc';
-                }
-            }
-            res = await personAPI.get_by_page(page, size, sorter.order, sorter.field, value);
+            res = await personAPI.get_by_ids(ids);
             if (res) {
                 setList(res.records)
-                setSelectedTotal(res.page_info.total_items);
             } else {
                 message.error('Error data');
             }
@@ -121,15 +107,6 @@ const PersonList = () => {
             setLoading(false);
         }, 500);
     }
-
-    // function onSearch(e) {
-    //     const value = e.currentTarget.value;
-    //     setDataSearch(value);
-    //     getList(selectedSorter, value);
-    //     debounceGetList(selectedSorter, value);
-    //     sessionStorage.clear();
-    // }
-    //sort
     const onChangeSort = (pagination, filters, sorter) => {
         resetPagination();
         setPage('1');
@@ -153,60 +130,6 @@ const PersonList = () => {
         setTableKey(`table-${Math.random()}`);  //  đổi key để ép re-render
     };
 
-    //copy
-    const copy = (id) => {
-        confirm({
-            title: 'Do you want to copy?',
-            onOk: async () => {
-                try {
-                    const res = await personAPI.copy(id);
-                    if (res) {
-                        history.push(`/app/managements/person/copy-person`, {res})
-                        // setPersonProfileVisible(true);
-                        // setSelectedPerson(res.data.id);
-                        getList(selectedSorter, dataSearch);
-                        message.success('Sao chép thành công');
-                    } else {
-                        message.error('Sao chép thất bại');
-                    }
-                } catch (error) {
-                    // history.push(`/auth/error-1`);
-                    console.log(error);
-                }
-            },
-            onCancel() {
-                message.info('Copying cancelled');
-            },
-        });
-    }
-
-    // copy multiple
-    const mass_copy = () => {
-        confirm({
-            title: 'Do you want to copy?',
-            onOk: async () => {
-                try {
-                    // const ids = selectedRowKeys;
-                    const res = await personAPI.mass_copy(selectedRowKeys);
-                    if (res) {
-                        // console.log(res)
-                        setSelectedRowKeys([]);
-                        history.push(`/app/managements/person/view-mass-copy`, {res});
-                        getList(selectedSorter, dataSearch);
-                        message.success('Copying successful');
-                    } else {
-                        message.error('Error copying');
-                    }
-                } catch(e) {
-                    history.push(`/auth/error-1`);
-                }
-            },
-            onCancel() {
-                message.info('Copying cancelled');
-            },
-        });
-    }
-
     //delete
     const destroy = (id) => {
         confirm({
@@ -229,55 +152,6 @@ const PersonList = () => {
             onCancel() {
                 message.info('Delete cancelled');
             },
-        });
-    }
-
-    //delete multiple
-    const mass_delete= () => {
-        confirm({
-            title: 'Do you want to delete?',
-            onOk: async () => {
-                try {
-                    const res = await personAPI.mass_delete(selectedRowKeys);
-
-                    if (res) {
-                        getList(selectedSorter, dataSearch);
-                        setSelectedRowKeys([]);
-                        setSelectedRows([]);
-                        message.success('Xóa thành công');
-                    } else {
-                        message.error('Xóa thất bại');
-                    }
-                } catch (e){
-                    history.push(`/auth/error-1`);
-                }
-            },
-            onCancel() {
-                message.info('Delete cancelled');
-            },
-        });
-    }
-
-    //in-out-view
-    const addPerson = () => {
-        history.push(`/app/managements/person/add-person`);
-    };
-
-    const viewDetail= (id) => {
-        history.push(`/app/managements/person/edit-person`, {id});
-    };
-
-    //import view
-    const importView = () => {
-        history.push(`/app/managements/person/import-person`);
-    }
-
-    //export view
-    const exportView = (ids) => {
-        const data = selectedRows;
-        history.push({
-            pathname: '/app/managements/person/export-person',
-            state: { data }
         });
     }
 
@@ -403,35 +277,11 @@ const PersonList = () => {
                             icon={<EditOutlined />}
                             onClick={() => editPerson(elm.id)} size="small"/>
                     </Tooltip>
-                    <Tooltip title="View">
-                        <Button
-                            className="mr-2 border-0"
-                            icon={<EyeOutlined />}
-                            onClick={() => viewDetail(elm.id)} size="small"/>
-                    </Tooltip>
-                    <EllipsisDropdown menu={dropdownMenu(elm)}/>
                 </div>
             ),
             key: '11'
         }
     ];
-
-    const dropdownMenu = elm => (
-        <Menu>
-            {/*<Menu.Item onClick={() => editPerson(elm.id)}>*/}
-            {/*    <Flex alignItems="center">*/}
-            {/*        <EditOutlined />*/}
-            {/*        <span className="ml-2">Edit</span>*/}
-            {/*    </Flex>*/}
-            {/*</Menu.Item>*/}
-            <Menu.Item onClick={() => copy(elm.id)}>
-                <Flex alignItems="center">
-                    <CopyOutlined />
-                    <span className="ml-2">Copy</span>
-                </Flex>
-            </Menu.Item>
-        </Menu>
-    );
 
     //filter
     const excludeDataIndex = ['id', 'identification', 'email'];
@@ -469,8 +319,9 @@ const PersonList = () => {
     const [personProfileVisible, setPersonProfileVisible] = useState(false);
     const [selectedPerson, setSelectedPerson] = useState();
 
-    const editPerson = (id) => {
-        history.push(`/app/managements/person/edit-person`, {id});
+    const editPerson= (id) => {
+        setPersonProfileVisible(true);
+        setSelectedPerson(id);
     };
 
     const closeEditPerson = async () => {
@@ -480,89 +331,35 @@ const PersonList = () => {
         setSelectedPerson(null);
     };
 
-    const action = [
-        { label: 'Nhập dữ liệu từ file', event:  importView, icon: <AlignLeftOutlined />},
-        { label: 'Xuất dữ liệu đã chọn theo mẫu', event: exportView, icon: <AlignLeftOutlined /> },
-        { label: 'Sao chép dữ liệu đã chọn', event: mass_copy, icon: <AlignLeftOutlined /> },
-        { label: 'Xóa dữ liệu đã chọn', event: mass_delete, icon: <AlignLeftOutlined /> },
-    ];
-
-    const handleSelectChange = (value) => {
-        const actionItem = action.find(act => act.label === value);
-        setSelectedAction(actionItem);
-    };
-
-    const handleButtonClick = () => {
-        if (selectedAction && selectedAction.event) {
-            selectedAction.event();
-        } else {
-            message.info('No action selected');
-        }
-    };
-
     return (
         <Card>
-            <Flex alignItems="center" justifyContent="between" mobileFlex={false}>
-                <Flex className="mb-1" mobileFlex={false}>
-                    <div className="mr-md-3">
-                        <Select
-                            defaultValue="Select"
-                            className="w-100"
-                            style={{minWidth: 228, maxWidth: 200, width: "auto"}}
-                            onChange={handleSelectChange}
-                        >
-                            <Option value="Select">Hành động</Option>
-                            {
-                                action.map(elm => (
-                                    <Option value={elm.label} key={elm.label}>
-                                        {elm.icon}
-                                        <span className="ml-2">{elm.label}</span>
-                                    </Option>
-                                ))
-                            }
-                        </Select>
-                    </div>
-                    <div className="mr-md-3">
-                        <Button type="primary" onClick={handleButtonClick}>Thực hiện</Button>
-                    </div>
-                </Flex>
-                <Flex className="mb-1" mobileFlex={false}>
-                    <div className="mr-md-3">
-                    <Search
-                            placeholder="Tìm kiếm"
-                            allowClear
-                            onSearch={onSearch}
-                            style={{
-                                width: 200,
-                            }}
-                        />
-                    </div>
-                    <div className="mr-md-3" style={{display:'flex', maxWidth: 150}}>
-                        <Button
-                            onClick={addPerson}
-                            type="primary"
-                            style={{borderRadius: '0', borderRightColor: 'white', background: '#666CFF'}}
-                            className="rounded-left"
-                            block>
-                            Thêm mới
+            <div className="container">
+                <div className="text-center mb-4">
+                    <h2 className="font-weight-semibold">Danh sách sao chép nhiều</h2>
+                    <Row type="flex" justify="center">
+                        <Col sm={24} md={12} lg={8}>
+                            <p>
+                                Sao chép thành công {codes.length} bản ghi
+                            </p>
+                        </Col>
+                    </Row>
+                </div>
+            </div>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <Space wrap>
+                    <Dropdown
+                        overlay={menu}
+                        trigger={['click']}
+                        placement="bottomLeft"
+                    >
+                        <Button type="primary"
+                                style={{borderRadius: '0', background: '#666CFF'}}
+                                className="rounded"
+                                icon={<SettingOutlined/>}>
                         </Button>
-
-                        <Space wrap>
-                            <Dropdown
-                                overlay={menu}
-                                trigger={['click']}
-                                placement="bottomLeft"
-                            >
-                                <Button type="primary"
-                                        style={{borderRadius: '0', background: '#666CFF'}}
-                                        className="rounded-right"
-                                        icon={<SettingOutlined/>}>
-                                </Button>
-                            </Dropdown>
-                        </Space>
-                    </div>
-                </Flex>
-            </Flex>
+                    </Dropdown>
+                </Space>
+            </div>
             <div className="table-responsive">
                 <Table
                     // classname={".ant-table-tbody"}
@@ -600,9 +397,9 @@ const PersonList = () => {
                     />
                 </div>
             </div>
-            {/*<EditPerson id={ selectedPerson} visible={personProfileVisible} close={() => (closeEditPerson())}/>*/}
+            <EditCopyPerson id={selectedPerson} visible={personProfileVisible} close={() => (closeEditPerson())}/>
         </Card>
     )
 }
 
-export default PersonList
+export default ViewMassCopy

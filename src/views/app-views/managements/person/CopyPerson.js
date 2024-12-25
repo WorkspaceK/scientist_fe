@@ -38,7 +38,7 @@ const CopyPerson = () => {
     const { res } = location.state || { res: [] };
 
     const fetchData = async () => {
-        const response = await personAPI.show(res.id);
+        const response = await personAPI.get_by_id(res.id);
         setDataPerson(response);
         form.setFieldsValue(response);
     }
@@ -48,8 +48,8 @@ const CopyPerson = () => {
 
     const update = async (data) => {
         try {
-            const res = await personAPI.update(res.id, data);
-            res ? message.success('Sửa thành công') : message.error('Sửa thất bại');
+            const response = await personAPI.update(res.id, data);
+            response ? message.success('Sửa thành công') : message.error('Sửa thất bại');
         } catch (error) {
             message.error('Error update class', error);
         }

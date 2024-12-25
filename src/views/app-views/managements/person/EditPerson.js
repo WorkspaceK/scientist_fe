@@ -38,7 +38,7 @@ const EditPerson = () => {
     const { id } = location.state || { id: [] };
 
     const fetchData = async () => {
-        const response = await personAPI.show(id);
+        const response = await personAPI.get_by_id(id);
         setDataPerson(response);
         form.setFieldsValue(response);
     }

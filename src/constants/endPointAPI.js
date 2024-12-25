@@ -1,20 +1,15 @@
 export const endPointAPI = {
     ADMIN: {
         PERSON: {
-            GET_LIST: 'admins/persons',
-            GET_PAGINATE: 'admins/persons/get-paginate',
-            GET_LIST_SORT_ORDER: 'admins/persons/get-list-sort-order',
+            GET: 'admins/persons',
+            mass_delete: 'admins/persons/delete',
+            mass_copy: 'admins/persons/copy',
+
             SHOW_PERSON_LIST_BY_ID: 'admins/persons/show-scientist-list-by-id',
             SHOW_PERSON_LIST_BY_CODE: 'admins/persons/show-scientist-list-by-code',
-            SEARCH: 'admins/persons/search',
             HAS_BY_CODE: 'admins/persons/has-by-code',
             HAS_BY_NAME: 'admins/persons/has-by-name',
             HAS_STUDENT_LISTS: 'admins/persons/has-student-list',
-
-            STORE: 'admins/persons/store',
-            UPDATE: 'admins/persons/update',
-            DELETE_MULTIPLE: 'admins/persons/delete-multiple',
-            RECORD_MULTIPLE: 'admins/persons/record-multiple',
             IMPORT_EXCEL_DATA: 'admins/persons/import-excel-data',
             EXPORT_CSV: 'admins/persons/export-csv',
             EXPORT_XLSX: 'admins/persons/export-xlsx',

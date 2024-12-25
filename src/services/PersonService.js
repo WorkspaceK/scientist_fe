@@ -4,7 +4,7 @@ import { endPointAPI } from 'constants/endPointAPI'
 const personService = () => {
     const get_by_page = async (page, size, order, field, dataSearch) => {
         try {
-            const response = await request.get(`/${endPointAPI.ADMIN.PERSON.GET_LIST}/page`, {
+            const response = await request.get(`/${endPointAPI.ADMIN.PERSON.GET}`, {
                 params: {
                     page: page,
                     size: size, /* size number / page */
@@ -20,15 +20,58 @@ const personService = () => {
         }
     };
 
-    const search = async (dataSearch) => {
+    const store = async (data) => {
+        return await request.post(`/${endPointAPI.ADMIN.PERSON.GET}`, data);
+    };
+
+    const get_by_id = async (id) => {
         try {
-            const response = await request.get(`/${endPointAPI.ADMIN.PERSON.SEARCH}`, {
-                params: {
-                    // identification: dataSearch,
-                    // first_name: dataSearch,
-                    last_name: dataSearch,
-                }
-            });
+            const response = await request.get(`/${endPointAPI.ADMIN.PERSON.GET}/${id}`);
+            return response.data;
+        } catch {
+            return null;
+        }
+    };
+
+    const update = async (id, dataPerson) => {
+        return await request.patch(`/${endPointAPI.ADMIN.PERSON.GET}/${id}`, dataPerson);
+    };
+
+    const destroy = async (id) => {
+        return await request.delete(`/${endPointAPI.ADMIN.PERSON.GET}/${id}`);
+    };
+
+    const mass_delete = async (ids) => {
+        try {
+            const res = await request.post(`/${endPointAPI.ADMIN.PERSON.mass_delete}`, ids);
+            return res.data;
+        } catch (error) {
+            console.error('Error deleting multiple records:', error);
+            return null;
+        }
+    };
+
+    const copy = async (id) => {
+        try {
+            const res = await request.post(`/${endPointAPI.ADMIN.PERSON.GET}/${id}/copy`);
+            return res.data;
+        } catch  {
+            return null;
+        }
+    };
+
+    const mass_copy = async (ids) => {
+        try {
+            const res = await request.post(`/${endPointAPI.ADMIN.PERSON.mass_copy}`, ids);
+            return res.data;
+        } catch  {
+            return null;
+        }
+    }
+
+    const get_by_ids = async (ids) => {
+        try {
+            const response = await request.get(`/${endPointAPI.ADMIN.PERSON.GET}/get_by_ids`, ids);
             return response.data;
         } catch {
             return null;
@@ -83,15 +126,6 @@ const personService = () => {
     //         return null;
     //     }
     // }
-
-    const show = async (id) => {
-        try {
-            const response = await request.get(`/${endPointAPI.ADMIN.PERSON.GET_LIST}/${id}/show`);
-            return response.data;
-        } catch {
-            return null;
-        }
-    };
 
     const showPersonListById = async (ids) => {
         try {
@@ -183,53 +217,14 @@ const personService = () => {
         }
     }
 
-    const store = async (data) => {
-        return await request.post(`/${endPointAPI.ADMIN.PERSON.STORE}`, data);
-    };
-
     const upload = async (id, dataPerson) => {
         return await request.patch(`/${endPointAPI.ADMIN.PERSON.GET_LIST}/${id}/upload-avatar`, dataPerson);
-    };
-
-    const update = async (id, dataPerson) => {
-        return await request.patch(`/${endPointAPI.ADMIN.PERSON.GET_LIST}/${id}/update`, dataPerson);
     };
 
     const updateStatus = async (id, status) => {
         return await request.patch(`/${endPointAPI.ADMIN.PERSON.GET_LIST}/${id}/update-status`,{ status: status}
         );
     };
-
-    const deletePerson = async (id) => {
-        return await request.delete(`/${endPointAPI.ADMIN.PERSON.GET_LIST}/${id}/delete`);
-    };
-
-    const deleteMultiple = async (ids) => {
-        try {
-            const res = await request.post(`/${endPointAPI.ADMIN.PERSON.DELETE_MULTIPLE}`, ids);
-            return res.data;
-        } catch (error) {
-            console.error('Error deleting multiple records:', error);
-            return null;
-        }
-    };
-
-    const record = async (id) => {
-        try {
-            return await request.post(`/${endPointAPI.ADMIN.PERSON.GET_LIST}/${id}/record`);
-        } catch  {
-            return null;
-        }
-    };
-
-    const recordMultiple = async (ids) => {
-        try {
-            const res = await request.post(`/${endPointAPI.ADMIN.PERSON.RECORD_MULTIPLE}`, ids);
-            return res.data;
-        } catch  {
-            return null;
-        }
-    }
 
     const importPerson = async (data) => {
         try {
@@ -353,26 +348,28 @@ const personService = () => {
 
     return {
         get_by_page,
-        search,
-        // getListPersonPaginate,
-        // getListSortOrder,
-        show,
+        store,
+        get_by_id,
+        update,
+
+        destroy,
+        mass_delete,
+
+        copy,
+        mass_copy,
+
+        get_by_ids,
+
         hasByCode,
         hasByName,
         hasByIdentifi,
         hasByEmail,
-
-        store,
         upload,
         showPersonListById,
         showPersonListByCode,
         showStudentList,
-        update,
+
         updateStatus,
-        deletePerson,
-        record,
-        recordMultiple,
-        deleteMultiple,
 
         //
         importPerson,
