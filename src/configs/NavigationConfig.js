@@ -1,7 +1,7 @@
-import { 
+import {
   HomeOutlined,
   IdcardOutlined,
-  DashboardOutlined, 
+  DashboardOutlined,
   AppstoreOutlined,
   FileTextOutlined,
   PieChartOutlined,
@@ -73,6 +73,23 @@ const managementNavTre = [{
   icon: DashboardOutlined,
   breadcrumb: true,
   submenu: [
+    {
+      key: 'managements-category',
+      path: `${APP_PREFIX_PATH}/managements/category`,
+      title: 'sidenav.management.category',
+      icon: HomeOutlined,
+      breadcrumb: true,
+      submenu: [
+        {
+          key: 'managements-category-degree',
+          path: `${APP_PREFIX_PATH}/managements/category/degree`,
+          title: 'sidenav.management.category.degree',
+          icon: '',
+          breadcrumb: true,
+          submenu: []
+        },
+      ]
+    },
     {
       key: 'managements-person',
       path: `${APP_PREFIX_PATH}/managements/person`,

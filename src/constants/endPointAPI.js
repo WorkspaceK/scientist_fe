@@ -1,5 +1,17 @@
 export const endPointAPI = {
     ADMIN: {
+        DEGREE: {
+            GET: 'admins/degrees',
+            MASS_DELETE: 'admins/degrees/delete',
+            MASS_COPY: 'admins/degrees/copy',
+
+            GET_BY_ID: 'admins/degrees/get-by-id',
+            GET_BY_CODE: 'admins/degrees/get-by-code',
+            HAS_BY_CODE: 'admins/degrees/has-by-code',
+            IMPORT_EXCEL_DATA: 'admins/degrees/import-excel-data',
+            EXPORT_CSV: 'admins/degrees/export-csv',
+            EXPORT_XLSX: 'admins/degrees/export-xlsx',
+        },
         PERSON: {
             GET: 'admins/persons',
             mass_delete: 'admins/persons/delete',
@@ -48,6 +60,7 @@ export const endPointAPI = {
             FORCE_DELETE_ALL: 'admins/publications/force-delete-all',
         },
     },
+    DEGREE: 'degree',
     PERSON: 'persons',
     PUBLICATION: 'publication',
 }
