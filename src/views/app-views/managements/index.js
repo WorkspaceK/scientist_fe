@@ -6,11 +6,11 @@ const Managements = ({ match }) => {
   return(
   <Suspense fallback={<Loading cover="content"/>}>
     <Switch>
-      <Route path={`${match.url}/category`} component={lazy(() => import(`./categories`))} />
+      <Route path={`${match.url}/categories`} component={lazy(() => import(`./categories`))} />
       <Route path={`${match.url}/person`} component={lazy(() => import(`./person`))} />
       <Route path={`${match.url}/publication`} component={lazy(() => import(`./publication`))} />
       {/*<Route path={`${match.url}/demo`} component={lazy(() => import(`./demo`))} />*/}
-      <Redirect from={`${match.url}`} to={`${match.url}/category`} />
+      <Redirect from={`${match.url}`} to={`${match.url}/categories`} />
     </Switch>
   </Suspense>
 )};

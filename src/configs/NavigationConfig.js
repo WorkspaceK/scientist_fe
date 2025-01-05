@@ -74,16 +74,16 @@ const managementNavTre = [{
   breadcrumb: true,
   submenu: [
     {
-      key: 'managements-category',
-      path: `${APP_PREFIX_PATH}/managements/category`,
-      title: 'sidenav.management.category',
+      key: 'managements-categories',
+      path: `${APP_PREFIX_PATH}/managements/categories`,
+      title: 'sidenav.management.categories',
       icon: HomeOutlined,
       breadcrumb: true,
       submenu: [
         {
-          key: 'managements-category-degree',
-          path: `${APP_PREFIX_PATH}/managements/category/degree`,
-          title: 'sidenav.management.category.degree',
+          key: 'managements-categories-degree',
+          path: `${APP_PREFIX_PATH}/managements/categories/degree`,
+          title: 'sidenav.management.categories.degree',
           icon: '',
           breadcrumb: true,
           submenu: []

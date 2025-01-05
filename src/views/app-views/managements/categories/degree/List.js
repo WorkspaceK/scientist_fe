@@ -11,7 +11,7 @@ import {
     Pagination,
     Checkbox,
     Space,
-    Dropdown, Tooltip
+    Dropdown, Tooltip, Popconfirm, Tag
 } from 'antd';
 import {
     EditOutlined, DeleteOutlined,
@@ -25,7 +25,7 @@ import utils from 'utils';
 import AvatarStatus from "components/shared-components/AvatarStatus";
 import {API_BASE_URL} from "constants/ApiConstant";
 import degreeService from "services/categories/DegreeService";
-// import
+import Edit from "./Edit";
 
 const { Option } = Select
 const { confirm } = Modal;
@@ -122,14 +122,6 @@ const List = () => {
         }, 500);
     }
 
-    // function onSearch(e) {
-    //     const value = e.currentTarget.value;
-    //     setDataSearch(value);
-    //     getList(selectedSorter, value);
-    //     debounceGetList(selectedSorter, value);
-    //     sessionStorage.clear();
-    // }
-    //sort
     const onChangeSort = (pagination, filters, sorter) => {
         resetPagination();
         setPage('1');
@@ -161,7 +153,7 @@ const List = () => {
                 try {
                     const res = await API.copy(id);
                     if (res) {
-                        history.push(`/app/managements/degree/copy-degree`, {res})
+                        history.push(`/app/managements/categories/degree/copy`, {res})
                         // setDegreeProfileVisible(true);
                         // setSelectedDegree(res.data.id);
                         getList(selectedSorter, dataSearch);
@@ -191,7 +183,7 @@ const List = () => {
                     if (res) {
                         // console.log(res)
                         setSelectedRowKeys([]);
-                        history.push(`/app/managements/degree/view-mass-copy`, {res});
+                        history.push(`/app/managements/categories/degree/view-mass-copy`, {res});
                         getList(selectedSorter, dataSearch);
                         message.success('Copying successful');
                     } else {
@@ -260,31 +252,30 @@ const List = () => {
 
     //in-out-view
     const addDegree = () => {
-        history.push(`/app/managements/category/degree/add`);
+        history.push(`/app/managements/categories/degree/add`);
     };
 
     const viewDetail= (id) => {
-        history.push(`/app/managements/category/degree/edit`, {id});
+        history.push(`/app/managements/categories/degree/view-detail`, {id});
     };
 
     //import view
     const importView = () => {
-        history.push(`/app/managements/category/degree/import`);
+        history.push(`/app/managements/categories/degree/import`);
     }
 
     //export view
     const exportView = (ids) => {
         const data = selectedRows;
         history.push({
-            pathname: '/app/managements/category/degree/export',
+            pathname: '/app/managements/categories/degree/export',
             state: { data }
         });
     }
 
     // Change status
-    const confirmStatus = async (e, elm) => {
-        let status;
-        e === 'active' ? (status = 'in active') : (status = 'active');
+    const confirmStatus = async (is_default, elm) => {
+        const status = is_default === true || is_default === true ? false : true;
         const res = await API.updateStatus(elm.id, status);
         if (res) {
             getList(selectedSorter, dataSearch);
@@ -326,7 +317,26 @@ const List = () => {
         {
             title: 'Mặc định',
             dataIndex: 'is_default',
-            sorter: (a, b) => utils.antdTableSorter(a, b, 'is_default'),
+            render: (is_default, elm) => {
+                // const isDefault = status === true;  // So sánh chuẩn hóa kiểu dữ liệu
+                return (
+                    <Popconfirm
+                        title="Thay đổi mặc định"
+                        description="Bạn có muốn thay đổi?"
+                        onConfirm={() => confirmStatus(is_default, elm)}
+                        onCancel={cancelStatus}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <Tag className="text-capitalize" color={is_default ? 'cyan' : 'red'}>
+                            {is_default ? 'True' : 'False'}
+                        </Tag>
+                    </Popconfirm>
+                );
+            },
+            // sorter: {
+            //     compare: (a, b) => a.is_default.length - b.is_default.length,
+            // },
             key: '5'
         },
         {
@@ -344,7 +354,7 @@ const List = () => {
                             // disabled={elm.students_count === 0 ? false : true}
                         />
                     </Tooltip>
-                    <Tooltip title="View">
+                    <Tooltip title="Edit">
                         <Button
                             className="mr-2 border-0"
                             icon={<EditOutlined />}
@@ -365,12 +375,6 @@ const List = () => {
 
     const dropdownMenu = elm => (
         <Menu>
-            {/*<Menu.Item onClick={() => editDegree(elm.id)}>*/}
-            {/*    <Flex alignItems="center">*/}
-            {/*        <EditOutlined />*/}
-            {/*        <span className="ml-2">Edit</span>*/}
-            {/*    </Flex>*/}
-            {/*</Menu.Item>*/}
             <Menu.Item onClick={() => copy(elm.id)}>
                 <Flex alignItems="center">
                     <CopyOutlined />
@@ -417,7 +421,8 @@ const List = () => {
     const [selectedDegree, setSelectedDegree] = useState();
 
     const editDegree = (id) => {
-        history.push(`/app/managements/degree/edit-degree`, {id});
+        setDegreeProfileVisible(true);
+        setSelectedDegree(id);
     };
 
     const closeEditDegree = async () => {
@@ -547,7 +552,7 @@ const List = () => {
                     />
                 </div>
             </div>
-            {/*<EditDegree id={ selectedDegree} visible={degreeProfileVisible} close={() => (closeEditDegree())}/>*/}
+            <Edit id={selectedDegree} visible={degreeProfileVisible} close={() => (closeEditDegree())}/>
         </Card>
     )
 }

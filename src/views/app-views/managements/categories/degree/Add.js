@@ -1,32 +1,15 @@
-import {Form, Input, Button, Select, Card, message, Upload, Image, Row, Col, Avatar} from 'antd';
-import {debounce, values, throttle} from 'lodash';
-import React, {useCallback, useState} from 'react';
+import {Form, Input, Button, Select, Card, message, Row, Col} from 'antd';
+import {throttle} from 'lodash';
+import React, {useState} from 'react';
 import DegreeService from 'services/categories/DegreeService';
-import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css';
-import Flex from 'components/shared-components/Flex'
-import CustomIcon from "components/util-components/CustomIcon";
-import { ImageSvg } from 'assets/svg/icon';
-import Dragger from "antd/es/upload/Dragger";
 import {useHistory} from "react-router-dom";
 
 const { Option } = Select;
 
-// Validator
-
-
-const layout = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 10 },
-};
-const tailLayout = {
-  wrapperCol: { offset: 8, span: 16 },
-};
-
 
 const Add = () => {
 	let history = useHistory();
-	const [value, setValue] = useState('');
 	const [action, setAction] = useState(null);
 	//Event
 	const API = DegreeService();
@@ -34,19 +17,8 @@ const Add = () => {
 	const [avatarFile, setAvatarFile] = useState(null);
 
 	const onFinish = async (data) => {
-		const formData = new FormData();
-
-		// Thêm các thông tin từ form vào formData
-		Object.keys(data).forEach(key => {
-			formData.append(key, data[key]);
-		});
-
-		// Nếu có avatar mới, thêm vào formData
-		if (avatarFile) {
-			formData.append('avatar', avatarFile);
-		}
 		try {
-			const res = await API.store(formData);
+			const res = await API.store(data);
 			if (res.status === 200) {
 				message.success('Thêm mới thành công');
 				if (action === 'goToList') {
@@ -58,7 +30,7 @@ const Add = () => {
 				message.error('Thêm mới thât bại');
 			}
 		} catch (error) {
-		  // message.error('Thêm mới thất bại2', error);
+		  message.error('Thêm mới thất bại2', error);
 		}
 	  };
 	const create = () => setAction('goToList');
@@ -72,9 +44,6 @@ const Add = () => {
 	const cancel = () => {
 		history.push(`/app/managements/category/degree/list`);
 	};
-
-	// const debounceSearchByCode =
-	// 	debounce((value) => hasByCode(value), 500);
 
 	const throttledSearchByCode = throttle(async (value) => {
 		return await API.hasByCode(value);
@@ -150,10 +119,10 @@ const Add = () => {
 
 					<Col span={24}>
 						<Form.Item name="is_default" label="Mặc định">
-							<Select className="w-100" placeholder="False" defaultValue="false"
+							<Select className="w-100" placeholder="Chọn giá trị" defaultValue="false"
 									options={[
-										{ value: 'false', label: 'False' },
-										{ value: 'true', label: 'True' },
+										{ value: false, label: 'False' },
+										{ value: true, label: 'True' },
 									]}
 							/>
 						</Form.Item>

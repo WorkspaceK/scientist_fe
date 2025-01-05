@@ -13,9 +13,6 @@ import personService from "services/PersonService";
 
 const { Option } = Select;
 
-// Validator
-
-
 const layout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 10 },

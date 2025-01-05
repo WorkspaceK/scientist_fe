@@ -128,7 +128,7 @@ const degreeService = () => {
     };
 
     const updateStatus = async (id, status) => {
-        return await request.patch(`/${endPointAPI.ADMIN.DEGREE.GET}/${id}/update-status`,{ status: status}
+        return await request.patch(`/${endPointAPI.ADMIN.DEGREE.GET}/${id}/update-status`,{ is_default: status}
         );
     };
 

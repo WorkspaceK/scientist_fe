@@ -7,7 +7,7 @@ const Categories = ({ match }) => {
         <Suspense fallback={<Loading cover="content"/>}>
             <Switch>
                 <Route path={`${match.url}/degree`} component={lazy(() => import(`./degree`))} />
-                <Redirect from={`${match.url}`} to={`${match.url}/person`} />
+                <Redirect from={`${match.url}`} to={`${match.url}/degree`} />
             </Switch>
         </Suspense>
     )};
