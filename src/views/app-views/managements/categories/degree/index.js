@@ -5,6 +5,7 @@ import Edit from "./Edit";
 import Add from "./Add";
 import ViewDetail from "./ViewDetail";
 import Copy from "./Copy";
+import ViewMassCopy from "./ViewMassCopy";
 
 const Degree = props => {
   const { match } = props
@@ -16,9 +17,7 @@ const Degree = props => {
 			<Route path={`${match.url}/view-detail`} component={ViewDetail} />
 			<Route path={`${match.url}/copy`} component={Copy} />
 
-			{/*<Route path={`${match.url}/view-mass-copy`} component={ViewMassCopy} />*/}
-			{/*<Route path={`${match.url}/EditCopy`} component={EditCopy} />*/}
-
+			<Route path={`${match.url}/view-mass-copy`} component={ViewMassCopy} />
 
 			{/*<Route path={`${match.url}/view-action`} component={ViewAction} />*/}
 			{/*<Route path={`${match.url}/import`} component={Import} />*/}

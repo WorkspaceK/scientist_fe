@@ -43,7 +43,7 @@ const degreeService = () => {
 
     const massDelete = async (ids) => {
         try {
-            const res = await request.post(`/${endPointAPI.ADMIN.DEGREE.mass_delete}`, ids);
+            const res = await request.post(`/${endPointAPI.ADMIN.DEGREE.MASS_DELETE}`, ids);
             return res.data;
         } catch (error) {
             console.error('Error deleting multiple records:', error);
@@ -62,7 +62,7 @@ const degreeService = () => {
 
     const massCopy = async (ids) => {
         try {
-            const res = await request.post(`/${endPointAPI.ADMIN.DEGREE.mass_copy}`, ids);
+            const res = await request.post(`/${endPointAPI.ADMIN.DEGREE.MASS_COPY}`, ids);
             return res.data;
         } catch  {
             return null;
@@ -71,7 +71,7 @@ const degreeService = () => {
 
     const getByIds = async (ids) => {
         try {
-            const response = await request.get(`/${endPointAPI.ADMIN.DEGREE.GET}/get_by_ids`, ids);
+            const response = await request.get(`/${endPointAPI.ADMIN.DEGREE.GET}/getByIds`, ids);
             return response.data;
         } catch {
             return null;

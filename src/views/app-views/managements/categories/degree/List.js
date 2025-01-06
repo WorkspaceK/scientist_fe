@@ -1,7 +1,6 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react';
 import {
     Card,
-    Table,
     Select,
     Input,
     Button,
@@ -11,23 +10,21 @@ import {
     Pagination,
     Checkbox,
     Space,
-    Dropdown, Tooltip, Popconfirm, Tag
+    Dropdown, Tooltip, Popconfirm, Tag, Table
 } from 'antd';
 import {
     EditOutlined, DeleteOutlined,
     EyeOutlined, CopyOutlined, SettingOutlined, AlignLeftOutlined
-} from '@ant-design/icons' ;
+} from '@ant-design/icons';
 import { useHistory } from "react-router-dom";
-import {debounce, isUndefined} from 'lodash';
+import { debounce, isUndefined } from 'lodash';
 import EllipsisDropdown from 'components/shared-components/EllipsisDropdown';
 import Flex from 'components/shared-components/Flex';
 import utils from 'utils';
-import AvatarStatus from "components/shared-components/AvatarStatus";
-import {API_BASE_URL} from "constants/ApiConstant";
 import degreeService from "services/categories/DegreeService";
 import Edit from "./Edit";
 
-const { Option } = Select
+const { Option } = Select;
 const { confirm } = Modal;
 const { Search } = Input;
 
@@ -47,31 +44,24 @@ const List = () => {
     const [selectedSorter, setSelectedSorter] = useState({});
     const [selectedAction, setSelectedAction] = useState(null);
 
-    //api
     useEffect(() => {
         if (dataSearch === "") getList(selectedSorter);
         else searchList(dataSearch);
-    }, [page, size, selectedSorter, dataSearch])
+    }, [page, size, selectedSorter, dataSearch]);
 
-    //get
     const getList = async (sorter, value) => {
         try {
             setLoading(true);
             let res;
             if (isUndefined(sorter.order)) {
-                // sessionStorage.clear();
                 sorter.order = 'desc';
                 sorter.field = 'updated_at';
             } else {
-                if (sorter.order === 'ascend') {
-                    sorter.order = 'asc';
-                } else if (sorter.order === 'descend') {
-                    sorter.order = 'desc';
-                }
+                sorter.order = sorter.order === 'ascend' ? 'asc' : 'desc';
             }
             res = await API.getByPage(page, size, sorter.order, sorter.field, value);
             if (res) {
-                setList(res.records)
+                setList(res.records);
                 setSelectedTotal(res.page_info.total_items);
             } else {
                 message.error('Error data');
@@ -81,15 +71,12 @@ const List = () => {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
-    //search
     const searchList = async (value) => {
         try {
             setLoading(true);
-            let res;
-            res = await API.search(value);
-
+            const res = await API.search(value);
             if (res) {
                 setList(res);
             } else {
@@ -100,34 +87,25 @@ const List = () => {
         } finally {
             setLoading(false);
         }
-    }
+    };
+
     const onSearch = (value) => {
         setDataSearch(value);
-    }
+    };
 
     const onShowSizeChange = (current, size) => {
-        setLoading(true);
         setSize(size);
-
-        setTimeout(() => {
-            setLoading(false);
-        }, 500);
     };
 
     const onChangePage = (page) => {
-        setLoading(true);
         setPage(page);
-        setTimeout(() => {
-            setLoading(false);
-        }, 500);
-    }
+    };
 
     const onChangeSort = (pagination, filters, sorter) => {
         resetPagination();
-        setPage('1');
+        setPage(1);
         setSelectedSorter(sorter);
-        // sessionStorage.clear();
-    }
+    };
 
     const [pagination, setPagination] = useState({
         current: 1,
@@ -142,10 +120,9 @@ const List = () => {
             pageSize: pagination.pageSize,
             total: pagination.total,
         });
-        setTableKey(`table-${Math.random()}`);  //  đổi key để ép re-render
+        setTableKey(`table-${Math.random()}`);
     };
 
-    //copy
     const copy = (id) => {
         confirm({
             title: 'Do you want to copy?',
@@ -153,16 +130,13 @@ const List = () => {
                 try {
                     const res = await API.copy(id);
                     if (res) {
-                        history.push(`/app/managements/categories/degree/copy`, {res})
-                        // setDegreeProfileVisible(true);
-                        // setSelectedDegree(res.data.id);
+                        history.push(`/app/managements/categories/degree/copy`, { res });
                         getList(selectedSorter, dataSearch);
                         message.success('Sao chép thành công');
                     } else {
                         message.error('Sao chép thất bại');
                     }
                 } catch (error) {
-                    // history.push(`/auth/error-1`);
                     console.log(error);
                 }
             },
@@ -170,18 +144,15 @@ const List = () => {
                 message.info('Copying cancelled');
             },
         });
-    }
+    };
 
-    // copy multiple
     const massCopy = () => {
         confirm({
             title: 'Do you want to copy?',
             onOk: async () => {
                 try {
-                    // const ids = selectedRowKeys;
                     const res = await API.massCopy(selectedRowKeys);
                     if (res) {
-                        // console.log(res)
                         setSelectedRowKeys([]);
                         history.push(`/app/managements/categories/degree/view-mass-copy`, {res});
                         getList(selectedSorter, dataSearch);
@@ -189,7 +160,7 @@ const List = () => {
                     } else {
                         message.error('Error copying');
                     }
-                } catch(e) {
+                } catch (e) {
                     history.push(`/auth/error-1`);
                 }
             },
@@ -197,23 +168,20 @@ const List = () => {
                 message.info('Copying cancelled');
             },
         });
-    }
+    };
 
-    //delete
     const destroy = (id) => {
         confirm({
             title: 'Do you want to delete?',
             onOk: async () => {
                 try {
                     const res = await API.destroy(id);
-
                     if (res) {
                         setList(list.filter(item => item.id !== id));
                         message.success('Xóa thành công');
                     } else {
                         message.error('Xóa thất bại');
                     }
-
                 } catch (error) {
                     history.push(`/auth/error-1`);
                 }
@@ -222,16 +190,14 @@ const List = () => {
                 message.info('Delete cancelled');
             },
         });
-    }
+    };
 
-    //delete multiple
-    const massDelete= () => {
+    const massDelete = () => {
         confirm({
             title: 'Do you want to delete?',
             onOk: async () => {
                 try {
                     const res = await API.massDelete(selectedRowKeys);
-
                     if (res) {
                         getList(selectedSorter, dataSearch);
                         setSelectedRowKeys([]);
@@ -240,7 +206,7 @@ const List = () => {
                     } else {
                         message.error('Xóa thất bại');
                     }
-                } catch (e){
+                } catch (e) {
                     history.push(`/auth/error-1`);
                 }
             },
@@ -248,34 +214,30 @@ const List = () => {
                 message.info('Delete cancelled');
             },
         });
-    }
+    };
 
-    //in-out-view
     const addDegree = () => {
         history.push(`/app/managements/categories/degree/add`);
     };
 
-    const viewDetail= (id) => {
-        history.push(`/app/managements/categories/degree/view-detail`, {id});
+    const viewDetail = (id) => {
+        history.push(`/app/managements/categories/degree/view-detail`, { id });
     };
 
-    //import view
     const importView = () => {
         history.push(`/app/managements/categories/degree/import`);
-    }
+    };
 
-    //export view
     const exportView = (ids) => {
         const data = selectedRows;
         history.push({
             pathname: '/app/managements/categories/degree/export',
             state: { data }
         });
-    }
+    };
 
-    // Change status
     const confirmStatus = async (is_default, elm) => {
-        const status = is_default === true || is_default === true ? false : true;
+        const status = !is_default;
         const res = await API.updateStatus(elm.id, status);
         if (res) {
             getList(selectedSorter, dataSearch);
@@ -284,11 +246,11 @@ const List = () => {
             message.error('Error updating data');
         }
     };
-    const cancelStatus = (e) => {
+
+    const cancelStatus = () => {
         message.error('Change cancelled');
     };
 
-    //tableColumns
     const tableColumns = [
         {
             title: 'STT',
@@ -317,26 +279,20 @@ const List = () => {
         {
             title: 'Mặc định',
             dataIndex: 'is_default',
-            render: (is_default, elm) => {
-                // const isDefault = status === true;  // So sánh chuẩn hóa kiểu dữ liệu
-                return (
-                    <Popconfirm
-                        title="Thay đổi mặc định"
-                        description="Bạn có muốn thay đổi?"
-                        onConfirm={() => confirmStatus(is_default, elm)}
-                        onCancel={cancelStatus}
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <Tag className="text-capitalize" color={is_default ? 'cyan' : 'red'}>
-                            {is_default ? 'True' : 'False'}
-                        </Tag>
-                    </Popconfirm>
-                );
-            },
-            // sorter: {
-            //     compare: (a, b) => a.is_default.length - b.is_default.length,
-            // },
+            render: (is_default, elm) => (
+                <Popconfirm
+                    title="Thay đổi mặc định"
+                    description="Bạn có muốn thay đổi?"
+                    onConfirm={() => confirmStatus(is_default, elm)}
+                    onCancel={cancelStatus}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                    <Tag className="text-capitalize" color={is_default ? 'cyan' : 'red'}>
+                        {is_default ? 'True' : 'False'}
+                    </Tag>
+                </Popconfirm>
+            ),
             key: '5'
         },
         {
@@ -348,10 +304,8 @@ const List = () => {
                         <Button
                             className="mr-2 border-0"
                             icon={<DeleteOutlined />}
-                            onClick={()=> destroy(elm.id)}
+                            onClick={() => destroy(elm.id)}
                             size="small"
-                            // danger={elm.students_count === 0 ? true : false}
-                            // disabled={elm.students_count === 0 ? false : true}
                         />
                     </Tooltip>
                     <Tooltip title="Edit">
@@ -371,7 +325,7 @@ const List = () => {
             ),
             key: '6'
         }
-    ];
+    ]
 
     const dropdownMenu = elm => (
         <Menu>
@@ -384,7 +338,6 @@ const List = () => {
         </Menu>
     );
 
-    //filter
     const excludeDataIndex = ['id'];
     const defaultCheckedList = tableColumns
         .filter(item => !excludeDataIndex.includes(item.dataIndex))
@@ -397,14 +350,12 @@ const List = () => {
     const newTableColumns = tableColumns.filter(item => checkedList.includes(item.key));
     const menu = (
         <Menu>
-            <div style={{padding: '10px'}}>
+            <div style={{ padding: '10px' }}>
                 <Checkbox.Group
                     value={checkedList}
                     options={options}
-                    onChange={(value) => {
-                        setCheckedList(value);
-                    }}
-                    style={{display: 'flex', flexDirection: 'column'}} // Add this line or use a className
+                    onChange={(value) => setCheckedList(value)}
+                    style={{ display: 'flex', flexDirection: 'column' }}
                 />
             </div>
         </Menu>
@@ -414,9 +365,9 @@ const List = () => {
         onChange: (key, rows) => {
             setSelectedRows(rows);
             setSelectedRowKeys(key);
-            console.log('setSelectedRowKeys:', key)
         }
-    }
+    };
+
     const [degreeProfileVisible, setDegreeProfileVisible] = useState(false);
     const [selectedDegree, setSelectedDegree] = useState();
 
@@ -425,15 +376,14 @@ const List = () => {
         setSelectedDegree(id);
     };
 
-    const closeEditDegree = async () => {
-        // getList(selectedSorter, dataSearch);
+    const closeEditDegree = () => {
         getList(selectedSorter, dataSearch);
         setDegreeProfileVisible(false);
         setSelectedDegree(null);
     };
 
     const action = [
-        { label: 'Nhập dữ liệu từ file', event:  importView, icon: <AlignLeftOutlined />},
+        { label: 'Nhập dữ liệu từ file', event: importView, icon: <AlignLeftOutlined /> },
         { label: 'Xuất dữ liệu đã chọn theo mẫu', event: exportView, icon: <AlignLeftOutlined /> },
         { label: 'Sao chép dữ liệu đã chọn', event: massCopy, icon: <AlignLeftOutlined /> },
         { label: 'Xóa dữ liệu đã chọn', event: massDelete, icon: <AlignLeftOutlined /> },
@@ -460,7 +410,7 @@ const List = () => {
                         <Select
                             defaultValue="Select"
                             className="w-100"
-                            style={{minWidth: 228, maxWidth: 200, width: "auto"}}
+                            style={{ minWidth: 228, maxWidth: 200, width: "auto" }}
                             onChange={handleSelectChange}
                         >
                             <Option value="Select">Hành động</Option>
@@ -480,36 +430,29 @@ const List = () => {
                 </Flex>
                 <Flex className="mb-1" mobileFlex={false}>
                     <div className="mr-md-3">
-                    <Search
+                        <Search
                             placeholder="Tìm kiếm"
                             allowClear
                             onSearch={onSearch}
-                            style={{
-                                width: 200,
-                            }}
+                            style={{ width: 200 }}
                         />
                     </div>
-                    <div className="mr-md-3" style={{display:'flex', maxWidth: 150}}>
+                    <div className="mr-md-3" style={{ display: 'flex', maxWidth: 150 }}>
                         <Button
                             onClick={addDegree}
                             type="primary"
-                            style={{borderRadius: '0', borderRightColor: 'white', background: '#666CFF'}}
+                            style={{ borderRadius: '0', borderRightColor: 'white', background: '#666CFF' }}
                             className="rounded-left"
                             block>
                             Thêm mới
                         </Button>
 
                         <Space wrap>
-                            <Dropdown
-                                overlay={menu}
-                                trigger={['click']}
-                                placement="bottomLeft"
-                            >
+                            <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft">
                                 <Button type="primary"
-                                        style={{borderRadius: '0', background: '#666CFF'}}
+                                        style={{ borderRadius: '0', background: '#666CFF' }}
                                         className="rounded-right"
-                                        icon={<SettingOutlined/>}>
-                                </Button>
+                                        icon={<SettingOutlined />}></Button>
                             </Dropdown>
                         </Space>
                     </div>
@@ -517,33 +460,22 @@ const List = () => {
             </Flex>
             <div className="table-responsive">
                 <Table
-                    // classname={".ant-table-tbody"}
                     columns={newTableColumns}
                     dataSource={list}
                     rowKey='id'
                     loading={loading}
-                    rowDegreeName={(record, index) => (index % 2 === 0 ? 'even-row' : 'odd-row')}
                     rowSelection={{
-                        selectedRowKeys: selectedRowKeys,
+                        selectedRowKeys,
                         type: 'checkbox',
-                        onChange: () => {
-
-                        },
                         preserveSelectedRowKeys: false,
                         ...rowSelection,
-                        // getCheckboxProps: (elm) => {
-                        //     if (selectedAction && selectedAction.label === 'Delete' && elm.students_count !== 0 ) {
-                        //         return {disabled: true};
-                        //     }
-                        // },
                     }}
                     pagination={false}
                     onChange={onChangeSort}
                 />
-                <br/>
+                <br />
                 <div className="text-right">
                     <Pagination
-                        // simple
                         key={tableKey}
                         showSizeChanger
                         onShowSizeChange={onShowSizeChange}
@@ -552,7 +484,7 @@ const List = () => {
                     />
                 </div>
             </div>
-            <Edit id={selectedDegree} visible={degreeProfileVisible} close={() => (closeEditDegree())}/>
+            <Edit id={selectedDegree} visible={degreeProfileVisible} close={closeEditDegree} />
         </Card>
     )
 }
