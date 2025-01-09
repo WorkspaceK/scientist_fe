@@ -14,7 +14,7 @@ import {
 } from 'antd';
 import {
     EditOutlined, DeleteOutlined,
-    EyeOutlined, CopyOutlined, SettingOutlined, AlignLeftOutlined
+    EyeOutlined, CopyOutlined, SettingOutlined, AlignLeftOutlined, FilterOutlined
 } from '@ant-design/icons';
 import { useHistory } from "react-router-dom";
 import { debounce, isUndefined } from 'lodash';
@@ -277,8 +277,15 @@ const List = () => {
             key: '4'
         },
         {
+            title: 'Mô tả',
+            dataIndex: 'description',
+            sorter: (a, b) => utils.antdTableSorter(a, b, 'description'),
+            key: '5'
+        },
+        {
             title: 'Mặc định',
             dataIndex: 'is_default',
+            sorter: (a, b) => utils.antdTableSorter(a, b, 'is_default'),
             render: (is_default, elm) => (
                 <Popconfirm
                     title="Thay đổi mặc định"
@@ -293,7 +300,7 @@ const List = () => {
                     </Tag>
                 </Popconfirm>
             ),
-            key: '5'
+            key: '6'
         },
         {
             title: '',
@@ -303,6 +310,7 @@ const List = () => {
                     <Tooltip title="Delete">
                         <Button
                             className="mr-2 border-0"
+                            danger
                             icon={<DeleteOutlined />}
                             onClick={() => destroy(elm.id)}
                             size="small"
@@ -323,7 +331,7 @@ const List = () => {
                     <EllipsisDropdown menu={dropdownMenu(elm)}/>
                 </div>
             ),
-            key: '6'
+            key: '7'
         }
     ]
 
@@ -452,7 +460,7 @@ const List = () => {
                                 <Button type="primary"
                                         style={{ borderRadius: '0', background: '#666CFF' }}
                                         className="rounded-right"
-                                        icon={<SettingOutlined />}></Button>
+                                        icon={<FilterOutlined />}></Button>
                             </Dropdown>
                         </Space>
                     </div>

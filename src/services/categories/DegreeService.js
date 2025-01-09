@@ -71,25 +71,20 @@ const degreeService = () => {
 
     const getByIds = async (ids) => {
         try {
-            const response = await request.get(`/${endPointAPI.ADMIN.DEGREE.GET}/getByIds`, ids);
+            const response = await request.get(`/${endPointAPI.ADMIN.DEGREE.GET_BY_ID}`, {
+                params: {
+                    ids,
+                }
+            });
             return response.data;
         } catch {
             return null;
         }
     };
 
-    const getByCodes = async (currentPage, size, sortOrder, field, dataSearch, codes) => {
+    const getByCodes = async (codes) => {
         try {
-            const response = await request.get(`/${endPointAPI.ADMIN.DEGREE.GET_BY_CODE}`,{
-                params: {
-                    page: currentPage,
-                    size: size,
-                    sortOrder: sortOrder,
-                    field: field,
-                    name: dataSearch,
-                    codes,
-                }
-            });
+            const response = await request.get(`/${endPointAPI.ADMIN.DEGREE.GET_BY_CODE}`, codes);
             return response.data;
         } catch {
             return null;
@@ -132,14 +127,9 @@ const degreeService = () => {
         );
     };
 
-    const importPerson = async (data) => {
-        try {
-            const res = await apiFormData.post(`/${endPointAPI.ADMIN.DEGREE.IMPORT_EXCEL_DATA}`, data);
-            return res.data;
-        } catch (error){
-            console.error('There was an error upload the file!', error);
-            return null;
-        }
+    const importFile = async (data) => {
+        const res = await apiFormData.post(`/${endPointAPI.ADMIN.DEGREE.IMPORT}`, data);
+        return res.data;
     }
 
     const exportCSV = async (data) => {
@@ -155,10 +145,10 @@ const degreeService = () => {
         }
     }
 
-    const exportXLSX = async (data) => {
+    const massExport = async (data) => {
         try {
-            const res = await apiFormData.get(`/${endPointAPI.ADMIN.DEGREE.EXPORT_XLSX}`, {
-                params:data,
+            const res = await apiFormData.get(`/${endPointAPI.ADMIN.DEGREE.EXPORT}`, {
+                params: data,
                 responseType: 'blob',
             });
             return res.data;
@@ -166,7 +156,7 @@ const degreeService = () => {
             console.error('There was an error downloading the file!', error);
             return null;
         }
-    }
+    };
 
     return {
         getByPage,
@@ -182,6 +172,8 @@ const degreeService = () => {
 
         getByIds,
 
+        massExport,
+
         hasByCode,
         hasByName,
         upload,
@@ -190,9 +182,9 @@ const degreeService = () => {
         updateStatus,
 
         //
-        importPerson,
+        importFile,
         exportCSV,
-        exportXLSX,
+
     };
 };
 

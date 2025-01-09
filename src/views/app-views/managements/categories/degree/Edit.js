@@ -136,6 +136,12 @@ const Edit = ({id, visible, close}) => {
                     </Col>
 
                     <Col span={24}>
+                        <Form.Item name="description" label="Description" rules={rules.description}>
+                            <Input.TextArea rows={4} />
+                        </Form.Item>
+                    </Col>
+
+                    <Col span={24}>
                         <Form.Item name="is_default" label="Mặc định">
                             <Select className="w-100" placeholder="False"
                                     options={[

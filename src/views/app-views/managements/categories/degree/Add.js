@@ -116,10 +116,15 @@ const Add = () => {
 							<Input/>
 						</Form.Item>
 					</Col>
+					<Col span={24}>
+						<Form.Item name="description" label="Description" rules={rules.description}>
+							<Input.TextArea rows={4} />
+						</Form.Item>
+					</Col>
 
 					<Col span={24}>
 						<Form.Item name="is_default" label="Mặc định">
-							<Select className="w-100" placeholder="Chọn giá trị" defaultValue="false"
+							<Select className="w-100" placeholder="Chọn giá trị"
 									options={[
 										{ value: false, label: 'False' },
 										{ value: true, label: 'True' },
@@ -129,7 +134,7 @@ const Add = () => {
 					</Col>
 				</Row>
 
-				<Form.Item >
+				<Form.Item>
 					<Button className="mr-2" htmlType="submit" onClick={create} style={{background:'#666CFF', color: 'white'}}>
 						Thêm mới
 					</Button>

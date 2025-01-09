@@ -8,9 +8,9 @@ export const endPointAPI = {
             GET_BY_ID: 'admins/degrees/get-by-id',
             GET_BY_CODE: 'admins/degrees/get-by-code',
             HAS_BY_CODE: 'admins/degrees/has-by-code',
-            IMPORT_EXCEL_DATA: 'admins/degrees/import-excel-data',
+            IMPORT: 'admins/degrees/import',
             EXPORT_CSV: 'admins/degrees/export-csv',
-            EXPORT_XLSX: 'admins/degrees/export-xlsx',
+            EXPORT: 'admins/degrees/export',
         },
         PERSON: {
             GET: 'admins/persons',

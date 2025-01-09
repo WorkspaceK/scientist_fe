@@ -98,6 +98,10 @@ const Copy = () => {
     return (
         <Card>
             <Col span={12} offset={6}>
+                <div className="text-center mb-4">
+                    <h2>Sao chép thành công</h2>
+                    <p>Có thể hiệu chỉnh thông tin sau khi sao chép</p>
+                </div>
                 <Form layout="vertical" form={form} name="control-hooks" onFinish={update}>
                     <Row gutter={16}>
                         <Col xs={24} sm={24} md={12}>
@@ -108,6 +112,12 @@ const Copy = () => {
                         <Col xs={24} sm={24} md={12}>
                             <Form.Item name="name" label="Tên học vị" rules={rules.name}>
                                 <Input/>
+                            </Form.Item>
+                        </Col>
+
+                        <Col span={24}>
+                            <Form.Item name="description" label="Description" rules={rules.description}>
+                                <Input.TextArea rows={4} />
                             </Form.Item>
                         </Col>
 

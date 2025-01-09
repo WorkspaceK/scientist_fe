@@ -6,6 +6,8 @@ import Add from "./Add";
 import ViewDetail from "./ViewDetail";
 import Copy from "./Copy";
 import ViewMassCopy from "./ViewMassCopy";
+import Import from "./Import";
+import Export from "./Export";
 
 const Degree = props => {
   const { match } = props
@@ -19,9 +21,9 @@ const Degree = props => {
 
 			<Route path={`${match.url}/view-mass-copy`} component={ViewMassCopy} />
 
-			{/*<Route path={`${match.url}/view-action`} component={ViewAction} />*/}
-			{/*<Route path={`${match.url}/import`} component={Import} />*/}
-			{/*<Route path={`${match.url}/export`} component={Export} />*/}
+			<Route path={`${match.url}/import`} component={Import} />
+			<Route path={`${match.url}/export`} component={Export} />
+
 			{/*<Route path={`${match.url}/recycle`} component={Recycle} />*/}
 			<Redirect exact from={`${match.url}`} to={`${match.url}/list`} />
 		</Switch>
