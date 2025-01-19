@@ -158,6 +158,84 @@ const degreeService = () => {
         }
     };
 
+    //recycle
+    const recycle = async (page, size, order, field, dataSearch) => {
+        try {
+            const response = await request.get(`/${endPointAPI.ADMIN.DEGREE.GET}/recycle`, {
+                params: {
+                    page: page,
+                    size: size, /* size number / page */
+                    order: order,
+                    field: field,
+                    name: dataSearch,
+                    // code: dataSearch,
+                }
+            });
+            return response.data;
+        } catch {
+            return null;
+        }
+    };
+
+    const restore = async (id) => {
+        try {
+            const response = await request
+                .post(`/${endPointAPI.ADMIN.DEGREE.GET}/${id}/restore`);
+            return response.data;
+        } catch  {
+            return null;
+        }
+    }
+
+    const restoreMultiple = async (ids) => {
+        try {
+            const response = await request
+                .post(`/${endPointAPI.ADMIN.DEGREE.RESTORE_MULTIPLE}`, ids);
+        } catch  {
+            return null;
+        }
+    }
+
+    const restoreAll = async () => {
+        try {
+            const response = await request
+                .post(`/${endPointAPI.ADMIN.DEGREE.RESTORE_ALL}`);
+            return response.data;
+        } catch  {
+            return null;
+        }
+    }
+
+    const forceDelete = async (id) => {
+        try {
+            const response = await request
+                .delete(`/${endPointAPI.ADMIN.DEGREE.GET}/${id}/force-delete`);
+            return response.data;
+        } catch {
+            return null;
+        }
+    }
+
+    const forceDeleteMultiple = async (ids) => {
+        try {
+            const response = await request
+                .delete(`/${endPointAPI.ADMIN.DEGREE.FORCE_DELETE_MULTIPLE}`, ids);
+            return response.data;
+        } catch  {
+            return null;
+        }
+    }
+
+    const forceDeleteAll = async () => {
+        try {
+            const response = await request
+                .delete(`/${endPointAPI.ADMIN.DEGREE.FORCE_DELETE_ALL}`);
+            return response.data;
+        } catch  {
+            return null;
+        }
+    }
+
     return {
         getByPage,
         store,
@@ -185,6 +263,14 @@ const degreeService = () => {
         importFile,
         exportCSV,
 
+        //recycle
+        recycle,
+        restore,
+        restoreMultiple,
+        restoreAll,
+        forceDelete,
+        forceDeleteMultiple,
+        forceDeleteAll,
     };
 };
 

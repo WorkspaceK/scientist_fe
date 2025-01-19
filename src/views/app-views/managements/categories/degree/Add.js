@@ -102,52 +102,55 @@ const Add = () => {
 
 
   return (
-	<Card>
-		<Col span={12} offset={6}>
-			<Form layout="vertical" form={form} name="control-hooks" onFinish={onFinish}>
-				<Row gutter={16}>
-					<Col xs={24} sm={24} md={12}>
-						<Form.Item name="code" label="Mã học vị" rules={rules.code}>
-							<Input/>
-						</Form.Item>
-					</Col>
-					<Col xs={24} sm={24} md={12}>
-						<Form.Item name="name" label="Tên học vị" rules={rules.name}>
-							<Input/>
-						</Form.Item>
-					</Col>
-					<Col span={24}>
-						<Form.Item name="description" label="Description" rules={rules.description}>
-							<Input.TextArea rows={4} />
-						</Form.Item>
-					</Col>
+	  <Card>
+		  <h1 className="mb-4 text-center" style={{fontSize: '32px', fontWeight: 'bold'}}>Thêm Mới</h1>
+		  <Col span={12} offset={6}>
+			  <Form layout="vertical" form={form} name="control-hooks" onFinish={onFinish}>
+				  <Row gutter={16}>
+					  <Col xs={24} sm={24} md={12}>
+						  <Form.Item name="code" label="Mã học vị" rules={rules.code}>
+							  <Input/>
+						  </Form.Item>
+					  </Col>
+					  <Col xs={24} sm={24} md={12}>
+						  <Form.Item name="name" label="Tên học vị" rules={rules.name}>
+							  <Input/>
+						  </Form.Item>
+					  </Col>
+					  <Col span={24}>
+						  <Form.Item name="description" label="Description" rules={rules.description}>
+							  <Input.TextArea rows={4}/>
+						  </Form.Item>
+					  </Col>
 
-					<Col span={24}>
-						<Form.Item name="is_default" label="Mặc định">
-							<Select className="w-100" placeholder="Chọn giá trị"
-									options={[
-										{ value: false, label: 'False' },
-										{ value: true, label: 'True' },
-									]}
-							/>
-						</Form.Item>
-					</Col>
-				</Row>
+					  <Col span={24}>
+						  <Form.Item name="is_default" label="Mặc định">
+							  <Select className="w-100" placeholder="Chọn giá trị"
+									  options={[
+										  {value: false, label: 'False'},
+										  {value: true, label: 'True'},
+									  ]}
+							  />
+						  </Form.Item>
+					  </Col>
+				  </Row>
 
-				<Form.Item>
-					<Button className="mr-2" htmlType="submit" onClick={create} style={{background:'#666CFF', color: 'white'}}>
-						Thêm mới
-					</Button>
-					<Button className="mr-2" htmlType="submit" onClick={create_and_continue} style={{background:'#66D1FF', color: 'white'}}>
-						Thêm mới và tiếp tục
-					</Button>
-					<Button className="mr-2"  htmlType="button" onClick={cancel}>
-						Trở về danh sách
-					</Button>
-				</Form.Item>
-			</Form>
-		</Col>
-	</Card>
+				  <Form.Item>
+					  <Button className="mr-2" htmlType="submit" onClick={create}
+							  style={{background: '#666CFF', color: 'white'}}>
+						  Thêm mới
+					  </Button>
+					  <Button className="mr-2" htmlType="submit" onClick={create_and_continue}
+							  style={{background: '#66D1FF', color: 'white'}}>
+						  Thêm mới và tiếp tục
+					  </Button>
+					  <Button className="mr-2" htmlType="button" onClick={cancel}>
+						  Trở về danh sách
+					  </Button>
+				  </Form.Item>
+			  </Form>
+		  </Col>
+	  </Card>
   );
 };
 

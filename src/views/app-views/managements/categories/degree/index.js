@@ -8,6 +8,7 @@ import Copy from "./Copy";
 import ViewMassCopy from "./ViewMassCopy";
 import Import from "./Import";
 import Export from "./Export";
+import Recycle from "./Recycle";
 
 const Degree = props => {
   const { match } = props
@@ -23,6 +24,7 @@ const Degree = props => {
 
 			<Route path={`${match.url}/import`} component={Import} />
 			<Route path={`${match.url}/export`} component={Export} />
+			<Route path={`${match.url}/recycle`} component={Recycle} />
 
 			{/*<Route path={`${match.url}/recycle`} component={Recycle} />*/}
 			<Redirect exact from={`${match.url}`} to={`${match.url}/list`} />

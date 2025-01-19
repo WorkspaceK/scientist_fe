@@ -46,7 +46,7 @@ const List = () => {
 
     useEffect(() => {
         if (dataSearch === "") getList(selectedSorter);
-        else searchList(dataSearch);
+        else getList(dataSearch);
     }, [page, size, selectedSorter, dataSearch]);
 
     const getList = async (sorter, value) => {
@@ -228,6 +228,10 @@ const List = () => {
         history.push(`/app/managements/categories/degree/import`);
     };
 
+    const openRecycle= () => {
+        history.push(`/app/managements/categories/degree/recycle`);
+    };
+
     const exportView = (ids) => {
         const data = selectedRows;
         history.push({
@@ -310,17 +314,19 @@ const List = () => {
                     <Tooltip title="Delete">
                         <Button
                             className="mr-2 border-0"
-                            danger
                             icon={<DeleteOutlined />}
                             onClick={() => destroy(elm.id)}
                             size="small"
+                            danger={elm.persons_count === 0 ? true : false}
+                            disabled={elm.persons_count === 0 ? false : true}
                         />
                     </Tooltip>
                     <Tooltip title="Edit">
                         <Button
                             className="mr-2 border-0"
                             icon={<EditOutlined />}
-                            onClick={() => editDegree(elm.id)} size="small"/>
+                            onClick={() => editDegree(elm.id)} size="small"
+                        />
                     </Tooltip>
                     <Tooltip title="View">
                         <Button
@@ -438,18 +444,23 @@ const List = () => {
                 </Flex>
                 <Flex className="mb-1" mobileFlex={false}>
                     <div className="mr-md-3">
+                        <div className="mr-md-3">
+                            <Button type="primary" onClick={openRecycle}>Thùng rác</Button>
+                        </div>
+                    </div>
+                    <div className="mr-md-3">
                         <Search
                             placeholder="Tìm kiếm"
                             allowClear
                             onSearch={onSearch}
-                            style={{ width: 200 }}
+                            style={{width: 200}}
                         />
                     </div>
-                    <div className="mr-md-3" style={{ display: 'flex', maxWidth: 150 }}>
+                    <div className="mr-md-3" style={{display: 'flex', maxWidth: 150}}>
                         <Button
                             onClick={addDegree}
                             type="primary"
-                            style={{ borderRadius: '0', borderRightColor: 'white', background: '#666CFF' }}
+                            style={{borderRadius: '0', borderRightColor: 'white', background: '#666CFF'}}
                             className="rounded-left"
                             block>
                             Thêm mới
@@ -458,9 +469,9 @@ const List = () => {
                         <Space wrap>
                             <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft">
                                 <Button type="primary"
-                                        style={{ borderRadius: '0', background: '#666CFF' }}
+                                        style={{borderRadius: '0', background: '#666CFF'}}
                                         className="rounded-right"
-                                        icon={<FilterOutlined />}></Button>
+                                        icon={<FilterOutlined/>}></Button>
                             </Dropdown>
                         </Space>
                     </div>

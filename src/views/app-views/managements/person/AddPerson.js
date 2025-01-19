@@ -167,11 +167,13 @@ const AddPeron = () => {
 		<Col span={12} offset={6}>
 			<Form layout="vertical" form={form} name="control-hooks" onFinish={onFinish}>
 				<Card>
+					<h1 className="mb-4 text-center" style={{fontSize: '32px', fontWeight: 'bold'}}>Thêm Mới</h1>
 					<Row gutter={16}>
 						<Col sm={24} md={23}>
 							<div className="d-md-flex ">
-								<div className="rounded bg-white shadow-sm mx-auto" style={{'maxWidth': `${avatarSize + 16}px`}}>
-									<Avatar shape="square" size={avatarSize} src="/img/avatars/avatar-new.png" />
+							<div className="rounded bg-white shadow-sm mx-auto"
+									 style={{'maxWidth': `${avatarSize + 16}px`}}>
+									<Avatar shape="square" size={avatarSize} src="/img/avatars/avatar-new.png"/>
 								</div>
 								<div className="ml-md-4 w-100 align-self-center">
 									<div className="mb-3 text-md-left text-center">

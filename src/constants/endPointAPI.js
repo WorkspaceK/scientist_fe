@@ -11,6 +11,13 @@ export const endPointAPI = {
             IMPORT: 'admins/degrees/import',
             EXPORT_CSV: 'admins/degrees/export-csv',
             EXPORT: 'admins/degrees/export',
+
+            //recycle
+            RECYCLE: 'admins/degrees/recycle',
+            RESTORE_MULTIPLE: 'admins/degrees/restore-multiple',
+            RESTORE_ALL: 'admins/degrees/restore-all',
+            FORCE_DELETE_MULTIPLE: 'admins/degrees/force-delete-multiple',
+            FORCE_DELETE_ALL: 'admins/degrees/force-delete-all',
         },
         PERSON: {
             GET: 'admins/persons',
